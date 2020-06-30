@@ -48,7 +48,7 @@ export default class RowComponent extends Component<Props, State> {
             .toFixed(2);
 
         const icon = isBill ? <FaExchangeAlt /> : <FaFileInvoiceDollar />;
-        const title = isBill ? 'Is transaction' : 'Is bill';
+        const title = isBill ? 'Remove bill' : 'Add as bill';
         return (
             <>
                 <Wrapper>
