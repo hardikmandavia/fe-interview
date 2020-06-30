@@ -1,29 +1,73 @@
-import React, { Component } from 'react';
+import React, { Component, Dispatch } from 'react';
 import { connect } from 'react-redux';
-import { Dispatch } from 'react';
 
-import { actions, BillsActionType } from '../../store/reducers/billsReducer';
+import { AppState } from '../../store';
+import { actions, BillsActionType } from '../../store/actions/bills';
 
-class Bills extends Component<any> {
-  componentDidMount() {
-    this.props.fetchBills();
-  }
+import { BillsMap, Tab, Bill } from '../../types';
 
-  render() {
-    return <div>BILLS!!</div>
-  }
+import BillsComponent from '../../components/Bills';
+import TabsComponent from '../../components/Tabs';
+
+interface Props {
+    billsById: BillsMap;
+    billsIds: string[];
+    fetchBills: () => void;
+    updateBill: (bill: Bill) => void;
 }
 
-const mapStateToProps = (state: any) => {
-  return {
-    state
-  };
+class BillsContainer extends Component<Props> {
+    componentDidMount() {
+        this.props.fetchBills();
+    }
+
+    toggleTransaction = (id: string) => {
+        const { billsById, updateBill } = this.props;
+
+        const bill = { ...billsById[id] };
+        bill.isBill = !bill.isBill;
+
+        updateBill(bill);
+    };
+
+    getList = () => {
+        const { billsById, billsIds } = this.props;
+
+        return billsIds.map((b: string) => billsById[b]);
+    };
+
+    getTabs = (): Tab[] => {
+        const all = this.getList();
+        const bills = all.filter((b: Bill) => b.isBill);
+        const potentialBills = all.filter((b: Bill) => !b.isBill);
+
+        return [
+            {
+                title: 'Bills',
+                component: <BillsComponent list={bills} onRemoveClick={this.toggleTransaction} />,
+            },
+            {
+                title: 'Transactions',
+                component: (
+                    <BillsComponent list={potentialBills} onRemoveClick={this.toggleTransaction} />
+                ),
+            },
+        ];
+    };
+
+    render() {
+        return <TabsComponent tabs={this.getTabs()} />;
+    }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<BillsActionType>) => {
-  return {
-    fetchBills: () => dispatch(actions.fetch())
-  }
-}
+const mapStateToProps = (state: AppState) => ({
+    billsById: state.bills.byId,
+    billsIds: state.bills.allIds,
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(Bills);
+const mapDispatchToProps = (dispatch: Dispatch<BillsActionType>) => ({
+    fetchBills: () => dispatch(actions.fetch()),
+    updateBill: (bill: Bill) => dispatch(actions.update(bill)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(BillsContainer);

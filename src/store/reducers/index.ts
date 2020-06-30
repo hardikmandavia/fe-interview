@@ -1,1 +1,1 @@
-export { default as Bills } from './billsReducer';
+export { default as bills } from './bills';

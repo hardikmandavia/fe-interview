@@ -38,7 +38,7 @@
       "categoryId": 2,
       "iconUrl": "https://pbs.twimg.com/profile_images/787957563463725056/duc0g4fp.jpg",
       "id": "5a5caa8efe33900100fd8ed6",
-      "isBill": true,
+      "isBill": false,
       "name": "Sky TV",
       "transactions": [
         {

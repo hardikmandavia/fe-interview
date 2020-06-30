@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-const url = 'http://localhost:3002';
+import { Bill } from '../types';
+import { APIConstants } from '../shared/constants';
 
-export const fetchBills = () => {
-  return axios.get(`${url}/bills`).then((res) => res.data);
-}
+export const fetchBills = () => axios.get(`${APIConstants.base}/bills`).then((res) => res.data);
+
+export const updateBill = (data: Bill) =>
+    axios.patch(`${APIConstants.base}/bills/${data.id}`, data);
